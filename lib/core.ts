@@ -1,5 +1,4 @@
 import * as Schema from "@effect/schema/Schema";
-import { flow } from "effect/Function";
 import * as Option from "effect/Option";
 import * as RRecord from "effect/ReadonlyRecord";
 
@@ -52,33 +51,32 @@ export const array = (
 };
 
 export const map =
-  <A, B>(
-    self: (search: URLSearchParams, name: string) => Option.Option<A>,
-    f: (a: A) => B
-  ) =>
-  (search: URLSearchParams, name: string) =>
-    Option.map(self(search, name), f);
+  <A, B>(self: (search: URLSearchParams) => A, f: (a: A) => B) =>
+  (search: URLSearchParams) =>
+    f(self(search));
 
 export const flatMap =
   <A, B>(
-    self: (search: URLSearchParams, name: string) => Option.Option<A>,
+    self: (search: URLSearchParams) => Option.Option<A>,
     f: (a: A) => Option.Option<B>
   ) =>
-  (search: URLSearchParams, name: string) =>
-    Option.flatMap(self(search, name), f);
+  (search: URLSearchParams) =>
+    Option.flatMap(self(search), f);
 
 export const orElse =
   <A, B>(
-    self: (search: URLSearchParams, name: string) => Option.Option<A>,
+    self: (search: URLSearchParams) => Option.Option<A>,
     f: () => Option.Option<B>
   ) =>
-  (search: URLSearchParams, name: string) =>
-    Option.orElse(self(search, name), f);
+  (search: URLSearchParams) =>
+    Option.orElse(self(search), f);
 
 export const getOrElse =
-  <A, B>(
-    self: (search: URLSearchParams, name: string) => Option.Option<A>,
-    f: () => B
-  ) =>
-  (search: URLSearchParams, name: string) =>
-    Option.getOrElse(self(search, name), f);
+  <A, B>(self: (search: URLSearchParams) => Option.Option<A>, f: () => B) =>
+  (search: URLSearchParams) =>
+    Option.getOrElse(self(search), f);
+
+export const getOrNull =
+  <A>(self: (search: URLSearchParams) => Option.Option<A>) =>
+  (search: URLSearchParams) =>
+    Option.getOrNull(self(search));
